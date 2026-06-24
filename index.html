@@ -1,1 +1,433 @@
-홈페이지 시작
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오늘의 포춘 메시지</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    background: #FFF5B7;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 420px;
+    padding: 0 0 60px;
+  }
+
+  /* ── 헤더 ── */
+  .header {
+    background: #FFF5B7;
+    text-align: center;
+    padding: 40px 20px 20px;
+    position: relative;
+  }
+
+  .header-title {
+    font-size: 28px;
+    font-weight: 900;
+    color: #FF6B2B;
+    line-height: 1.3;
+    margin-bottom: 20px;
+  }
+
+  .cookie-wrap {
+    position: relative;
+    display: inline-block;
+    margin: 10px 0;
+  }
+
+  .cookie-img {
+    font-size: 100px;
+    display: block;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .star {
+    position: absolute;
+    font-size: 18px;
+    animation: twinkle 2s ease-in-out infinite;
+  }
+  .star:nth-child(2) { top: 10px; left: 20px; animation-delay: 0.3s; }
+  .star:nth-child(3) { top: 0px; right: 30px; animation-delay: 0.8s; }
+  .star:nth-child(4) { bottom: 20px; left: 10px; animation-delay: 1.2s; font-size: 12px; }
+  .star:nth-child(5) { bottom: 10px; right: 20px; animation-delay: 0.5s; font-size: 14px; }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  /* ── 카드 공통 ── */
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    margin: 12px 16px;
+    padding: 24px 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  /* ── 운세 텍스트 ── */
+  .fortune-text {
+    font-size: 15px;
+    color: #333;
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+
+  /* ── 점수 바 ── */
+  .score-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 14px;
+    gap: 10px;
+  }
+
+  .score-label {
+    font-size: 15px;
+    color: #333;
+    font-weight: 600;
+    width: 36px;
+    flex-shrink: 0;
+  }
+
+  .score-bar-wrap {
+    flex: 1;
+    background: #F0F0F0;
+    border-radius: 99px;
+    height: 14px;
+    overflow: hidden;
+  }
+
+  .score-bar {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #FF9A3C, #FF6B2B);
+    transition: width 1s ease;
+  }
+
+  .score-num {
+    font-size: 14px;
+    font-weight: 700;
+    color: #FF6B2B;
+    width: 36px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ── 행운 키워드 ── */
+  .card-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 16px;
+  }
+
+  .keyword-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #F5F5F5;
+    gap: 12px;
+  }
+
+  .keyword-row:last-child { border-bottom: none; }
+
+  .keyword-icon { font-size: 22px; width: 28px; text-align: center; flex-shrink: 0; }
+
+  .keyword-name {
+    font-size: 15px;
+    color: #555;
+    flex: 1;
+  }
+
+  .keyword-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .color-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+
+  /* ── 오늘의 행운 과자 ── */
+  .snack-card {
+    background: #fff;
+    border-radius: 20px;
+    margin: 12px 16px;
+    padding: 24px 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    text-align: center;
+  }
+
+  .snack-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 4px;
+    text-align: left;
+  }
+
+  .snack-subtitle {
+    font-size: 12px;
+    color: #aaa;
+    margin-bottom: 20px;
+    text-align: left;
+  }
+
+  .snack-emoji-wrap {
+    position: relative;
+    display: inline-block;
+    margin: 10px 0;
+  }
+
+  .snack-emoji {
+    font-size: 90px;
+    display: block;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.12));
+    animation: float 3.5s ease-in-out infinite;
+  }
+
+  .snack-star {
+    position: absolute;
+    font-size: 20px;
+    color: #FFD700;
+  }
+  .snack-star:nth-child(2) { top: -5px; left: -10px; animation: twinkle 1.8s infinite; }
+  .snack-star:nth-child(3) { top: 5px; right: -15px; animation: twinkle 2.2s infinite 0.5s; }
+  .snack-star:nth-child(4) { bottom: 0px; left: 5px; animation: twinkle 1.5s infinite 1s; font-size: 14px; }
+
+  .snack-name {
+    font-size: 22px;
+    font-weight: 900;
+    color: #FF6B2B;
+    margin: 10px 0 6px;
+  }
+
+  .snack-desc {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.6;
+  }
+
+  .snack-tag-wrap {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+
+  .snack-tag {
+    background: #FFF0E5;
+    color: #FF6B2B;
+    border-radius: 99px;
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* ── 새로 뽑기 버튼 ── */
+  .btn-wrap { padding: 10px 16px 0; }
+
+  .btn-redraw {
+    width: 100%;
+    background: linear-gradient(135deg, #FF9A3C, #FF6B2B);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(255,107,43,0.35);
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+
+  .btn-redraw:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px rgba(255,107,43,0.25);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- 헤더 -->
+  <div class="header">
+    <div class="header-title" id="user-title">7463 님의<br>포춘 메시지</div>
+    <div class="cookie-wrap">
+      <span class="star">⭐</span>
+      <span class="star">✨</span>
+      <span class="star">⭐</span>
+      <span class="star">✨</span>
+      <span class="cookie-img">🥠</span>
+    </div>
+  </div>
+
+  <!-- 오늘의 운세 -->
+  <div class="card">
+    <p class="fortune-text" id="fortune-text"></p>
+
+    <div id="scores"></div>
+  </div>
+
+  <!-- 행운 키워드 -->
+  <div class="card">
+    <div class="card-title">행운 키워드</div>
+    <div id="keywords"></div>
+  </div>
+
+  <!-- 오늘의 행운 과자 -->
+  <div class="snack-card">
+    <div class="snack-title">오늘의 행운 과자</div>
+    <div class="snack-subtitle">이 과자를 먹으면 운이 따라와요 🍀</div>
+    <div class="snack-emoji-wrap">
+      <span class="snack-star">⭐</span>
+      <span class="snack-star">⭐</span>
+      <span class="snack-star">⭐</span>
+      <span class="snack-emoji" id="snack-emoji"></span>
+    </div>
+    <div class="snack-name" id="snack-name"></div>
+    <div class="snack-desc" id="snack-desc"></div>
+    <div class="snack-tag-wrap" id="snack-tags"></div>
+  </div>
+
+  <!-- 새로 뽑기 -->
+  <div class="btn-wrap">
+    <button class="btn-redraw" onclick="generate()">🥠 다시 뽑기</button>
+  </div>
+
+</div>
+
+<script>
+const FORTUNES = [
+  "오늘은 웃음이 끊이지 않는 하루입니다. 예상치 못한 작은 재미가 매 순간 당신을 기다리고 있어요. 그냥 흐름에 몸을 맡기면, 생각지도 못한 기쁜 일이 생길 거예요!",
+  "작은 행동이 큰 변화를 만듭니다. 오늘 용기 내어 한 걸음 더 나아가 보세요. 당신의 노력이 빛을 발하는 날이 멀지 않았어요.",
+  "주변 사람들의 따뜻한 말 한마디가 오늘 하루를 특별하게 만들어 줄 거예요. 먼저 미소를 건네보세요, 행운이 함께 돌아올 거예요.",
+  "오늘은 직관을 믿어야 하는 날입니다. 머리보다 가슴이 이끄는 대로 움직이면, 뜻밖의 좋은 결과가 찾아올 거예요.",
+  "차분하게 생각을 정리하는 시간을 가져보세요. 복잡하게 얽힌 문제들이 오늘 하나씩 풀릴 것입니다. 서두르지 않아도 돼요.",
+];
+
+const SCORE_LABELS = ["금전", "직장", "애정", "학업", "건강"];
+
+const KEYWORDS = {
+  numbers: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,21,33,42,77,88],
+  directions: ["동쪽","서쪽","남쪽","북쪽","동남쪽","서북쪽","동북쪽","남서쪽"],
+  colors: [
+    { name:"핑크 코랄", hex:"#FF6B6B" },
+    { name:"민트 그린", hex:"#3FDBBA" },
+    { name:"선셋 오렌지", hex:"#FF8C42" },
+    { name:"라벤더", hex:"#C5A3FF" },
+    { name:"스카이 블루", hex:"#5BC8FB" },
+    { name:"레몬 옐로", hex:"#FFE040" },
+    { name:"피치 핑크", hex:"#FFB3A7" },
+    { name:"에메랄드", hex:"#2ECC71" },
+  ],
+  foods: ["청국장","김치찌개","된장국","비빔밥","순대","떡볶이","삼겹살","냉면","잔치국수","떡국"],
+};
+
+const SNACKS = [
+  { emoji:"🍪", name:"초코칩 쿠키", desc:"달콤한 초콜릿의 기운이 오늘 하루를 달달하게 채워줄 거예요.", tags:["#달콤함","#에너지UP","#행복"] },
+  { emoji:"🥨", name:"프레즐", desc:"꼬불꼬불한 모양처럼 예상 밖의 재미있는 일이 펼쳐질 거예요!", tags:["#반전매력","#짭짤함","#유니크"] },
+  { emoji:"🍿", name:"팝콘", desc:"톡톡 터지는 팝콘처럼 오늘 아이디어가 샘솟을 거예요.", tags:["#창의력","#통통튀는","#무한리필"] },
+  { emoji:"🍫", name:"초콜릿", desc:"부드럽게 녹아드는 초콜릿처럼 인간관계가 부드러워질 거예요.", tags:["#관계운","#달달함","#프리미엄"] },
+  { emoji:"🧇", name:"와플 과자", desc:"바삭바삭한 와플처럼 오늘 하루 군더더기 없이 완벽할 거예요!", tags:["#완벽한하루","#바삭함","#특별함"] },
+  { emoji:"🍬", name:"캔디", desc:"알록달록 캔디처럼 오늘 다양한 즐거움이 찾아올 거예요.", tags:["#다채로움","#달콤한행운","#컬러풀"] },
+  { emoji:"🥜", name:"허니버터 아몬드", desc:"고소하고 달콤한 아몬드처럼 오늘 두 가지 행운이 겹칩니다.", tags:["#두배행운","#고소함","#든든함"] },
+  { emoji:"🍡", name:"찹쌀 과자", desc:"쫄깃하고 끈질긴 찹쌀처럼 오늘 포기하지 마세요. 결과가 옵니다.", tags:["#끈기","#전통의맛","#든든함"] },
+  { emoji:"🧁", name:"머핀", desc:"촉촉하고 폭신한 머핀처럼 오늘 마음이 여유롭고 행복할 거예요.", tags:["#여유","#촉촉함","#힐링"] },
+  { emoji:"🍩", name:"도넛", desc:"동그란 도넛처럼 오늘 하루가 순환하며 좋은 일이 돌아와요.", tags:["#순환행운","#달콤함","#완성"] },
+  { emoji:"🥐", name:"크루아상 과자", desc:"겹겹이 쌓인 결처럼 오늘 노력이 층층이 쌓여 빛날 거예요.", tags:["#성취","#고급짐","#노력의결실"] },
+  { emoji:"🍭", name:"막대사탕", desc:"오래 즐기는 막대사탕처럼 오늘의 행운이 오래 지속될 거예요!", tags:["#지속행운","#롱런","#달달함"] },
+];
+
+function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+function generate() {
+  // 번호
+  const num = randInt(1000, 9999);
+  document.getElementById('user-title').innerHTML = `${num} 님의<br>포춘 메시지`;
+
+  // 운세 텍스트
+  document.getElementById('fortune-text').textContent = rand(FORTUNES);
+
+  // 점수
+  const scoresEl = document.getElementById('scores');
+  scoresEl.innerHTML = '';
+  SCORE_LABELS.forEach(label => {
+    const score = randInt(30, 100);
+    scoresEl.innerHTML += `
+      <div class="score-row">
+        <span class="score-label">${label}</span>
+        <div class="score-bar-wrap">
+          <div class="score-bar" style="width:${score}%"></div>
+        </div>
+        <span class="score-num">${score}점</span>
+      </div>`;
+  });
+
+  // 키워드
+  const color = rand(KEYWORDS.colors);
+  document.getElementById('keywords').innerHTML = `
+    <div class="keyword-row">
+      <span class="keyword-icon">🔖</span>
+      <span class="keyword-name">숫자</span>
+      <span class="keyword-value">${rand(KEYWORDS.numbers)}</span>
+    </div>
+    <div class="keyword-row">
+      <span class="keyword-icon">🧭</span>
+      <span class="keyword-name">방향</span>
+      <span class="keyword-value">${rand(KEYWORDS.directions)}</span>
+    </div>
+    <div class="keyword-row">
+      <span class="keyword-icon">🎨</span>
+      <span class="keyword-name">컬러</span>
+      <span class="keyword-value">
+        <span class="color-dot" style="background:${color.hex}"></span>
+        ${color.name}
+      </span>
+    </div>
+    <div class="keyword-row">
+      <span class="keyword-icon">🍽️</span>
+      <span class="keyword-name">음식</span>
+      <span class="keyword-value">${rand(KEYWORDS.foods)}</span>
+    </div>`;
+
+  // 행운 과자
+  const snack = rand(SNACKS);
+  document.getElementById('snack-emoji').textContent = snack.emoji;
+  document.getElementById('snack-name').textContent = snack.name;
+  document.getElementById('snack-desc').textContent = snack.desc;
+  document.getElementById('snack-tags').innerHTML =
+    snack.tags.map(t => `<span class="snack-tag">${t}</span>`).join('');
+}
+
+// 최초 실행
+generate();
+</script>
+</body>
+</html>
+
